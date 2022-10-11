@@ -20,7 +20,7 @@ export class Usuario{
     }
 
     public getAllUsers() {
-        this.dao.getUser();
+        this.dao.getUser()
     }
 
     public getUserByIndex(index:number) {

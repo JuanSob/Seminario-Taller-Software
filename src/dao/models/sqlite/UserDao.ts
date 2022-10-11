@@ -6,18 +6,19 @@ export class UserDao extends AbstractDao<IUsuario> {
 
   public constructor(db:sqlite.Database){
     super('User', db as sqlite.Database)
-    super.exec('CREATE TABLE IF NOT EXISTS CASHFLOW(_id INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,'+
+    super.exec('CREATE TABLE IF NOT EXISTS User '+
+    '(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'+
     'status TEXT,'+
-    'firstName TEXT'+
-    'secondName TEXT'+
-    'birthDay TEXT'+
-    'phoneNumber TEXT'+
-    'user TEXT'+
+    'firstName TEXT,'+
+    'secondName TEXT,'+
+    'birthDay TEXT,'+
+    'phoneNumber TEXT,'+
+    'user TEXT,'+
     'password TEXT);').then().catch(e=>console.error(e));
   }
 
   public async getUser() {
-    return super.findAll();
+    return await super.findAll();
   }
 
   public async getUserByID( identifier: Partial<IUsuario>){
