@@ -3,7 +3,7 @@ import { ICashFlow, CashFlow } from '@libs/CashFlow';
 import { commonValidator, validateInput } from '@server/utils/validator';
 
 const router = Router();
-const cashFlowInstance = new CashFlow();
+const cashFlowInstance = new CashFlow("MONGODB");
 
 router.get('/', async (_req, res)=>{
   try {
@@ -14,10 +14,20 @@ router.get('/', async (_req, res)=>{
   }
 });
 
+router.get('/count', async (_req, res)=>{
+  try {
+    res.json({"count": await cashFlowInstance.getCountCashFlouw()});
+  } catch (ex) {
+    console.error(ex);
+    res.status(503).json({error:ex});
+  }
+});
+
 router.get('/byindex/:index', async (req, res) => {
   try {
     const { index } = req.params;
-    res.json(await cashFlowInstance.getCashFlowByIndex(+index));
+    const id = (/^\d*$/.test(index))?+index:index;
+    res.json(await cashFlowInstance.getCashFlowByIndex(id));
   } catch (error) {
     console.log("Error", error);
     res.status(500).json({'msg': 'Error al obtener Registro'});
@@ -53,7 +63,8 @@ router.put('/update/:index', async (req, res)=>{
   try {
     const { index } = req.params;
     const cashFlowFromForm = req.body as ICashFlow;
-    await cashFlowInstance.updateCashFlow(+index, cashFlowFromForm);
+    const id = (/^\d*$/.test(index))?+index:index;
+    await cashFlowInstance.updateCashFlow(id, cashFlowFromForm);
     res.status(200).json({"msg":"Registro Actualizado"});
   } catch(error) {
     res.status(500).json({error: (error as Error).message});
@@ -63,7 +74,8 @@ router.put('/update/:index', async (req, res)=>{
 router.delete('/delete/:index', (req, res)=>{
   try {
     const { index } = req.params;
-    if (cashFlowInstance.deleteCashFlow(+index)) {
+    const id = (/^\d*$/.test(index))?+index:index;
+    if (cashFlowInstance.deleteCashFlow(id)) {
       res.status(200).json({"msg": "Registro Eliminado"});
     } else {
       res.status(500).json({'msg': 'Error al eliminar Registro'});
