@@ -11,6 +11,6 @@ passport.use("auth-github", new GitHubStrategy({
 }, function (_accessToken, _refreshToken, profile, done) {
 	//console.log(profile);
 	done(null, profile);
-	userGitHub.registerUser(profile.displayName,profile.id, profile.profileUrl, profile.photos);
+	userGitHub.logInByGitHub(profile.username,profile.id, profile.profileUrl, profile.photos);
 }
 ));

@@ -11,16 +11,31 @@ export class UserGitHub {
 			.catch(ex => console.error(ex));
 	}
 
-	public registerUser(username: string, gitHubId:string, profileUrl:string, photos:[])
+	public async logInByGitHub(username: string, gitHubId:string, profileUrl:string, photos:[])
 	{
-		const newUserGitHub = {
-			username,
-			gitHubId,
-			created: new Date(),
-			profileUrl,
-			photos,
-			userType: 'GitHubUser'
+		try{
+			const user = await this.dao.findUserByGitHubId(gitHubId);
+			if(!!!user){
+				const day = new Date();
+				const newUserGitHub = {
+					username,
+					gitHubId,
+					created: day,
+					lastLogin: day,
+					profileUrl,
+					photos,
+					userType: 'GitHubUser'
+				}
+				return this.dao.createNewUser(newUserGitHub);
+			}
+			else{
+				await this.dao.signIn(user._id.toString());
+				return user;
+			}
 		}
-		return this.dao.createNewUser(newUserGitHub);
+		catch(err){
+			console.log('LOGIN GITHUB:', err);
+			throw err
+		}
 	}
 }
